@@ -1,0 +1,42 @@
+---
+import { getApplicationWithDetails } from "../../lib/db";
+import "../../styles.css";
+
+const id = Number(Astro.params.id);
+const details = id ? getApplicationWithDetails(id) : undefined;
+
+if (!details) {
+  return new Response(null, { status: 404, statusText: "Not found" });
+}
+
+const { application, permitType, payment } = details;
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Application status — {permitType.name}</title>
+  </head>
+  <body>
+    <nav aria-label="site">
+      <a href="/">Permits</a>
+      <a href="/readme/">About</a>
+    </nav>
+    <main>
+      <h1>Application #{application.id}</h1>
+      <span class={`tag tag-${permitType.audience}`}>{permitType.audience}</span>
+      <p>{permitType.name} for {application.applicantName} ({application.applicantEmail}).</p>
+      <p>Status: <strong>{application.status}</strong></p>
+      {
+        payment && (
+          <p>
+            Payment: <strong>{payment.status}</strong>
+            {payment.amountCents > 0 && ` — $${(payment.amountCents / 100).toFixed(2)}`}
+          </p>
+        )
+      }
+    </main>
+  </body>
+</html>

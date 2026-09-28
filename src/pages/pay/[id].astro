@@ -1,0 +1,43 @@
+---
+import { getApplicationWithDetails } from "../../lib/db";
+import "../../styles.css";
+
+const id = Number(Astro.params.id);
+const details = id ? getApplicationWithDetails(id) : undefined;
+
+if (!details) {
+  return new Response(null, { status: 404, statusText: "Not found" });
+}
+
+const { application, permitType, payment } = details;
+
+if (application.status !== "awaiting_payment" || !payment || payment.status !== "pending") {
+  return Astro.redirect(`/status/${application.id}`, 303);
+}
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pay — {permitType.name}</title>
+  </head>
+  <body>
+    <nav aria-label="site">
+      <a href="/">Permits</a>
+      <a href="/readme/">About</a>
+    </nav>
+    <main>
+      <h1>Confirm payment</h1>
+      <p>{permitType.name} for {application.applicantName}.</p>
+      <p class="price">
+        {payment.amountCents === 0 ? "Free" : `$${(payment.amountCents / 100).toFixed(2)}`}
+      </p>
+      <form method="post" action="/api/payments">
+        <input type="hidden" name="applicationId" value={application.id} />
+        <button>Pay now</button>
+      </form>
+    </main>
+  </body>
+</html>
