@@ -1,0 +1,66 @@
+---
+import { getPermitTypeBySlug } from "../../lib/db";
+import "../../styles.css";
+
+const { slug } = Astro.params;
+const permitType = slug ? getPermitTypeBySlug(slug) : undefined;
+
+if (!permitType) {
+  return new Response(null, { status: 404, statusText: "Not found" });
+}
+
+const eligibilityCriteria = permitType.eligibilityCriteria.split("\n");
+const requiredDocuments = permitType.requiredDocuments.split("\n");
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Apply — {permitType.name}</title>
+  </head>
+  <body>
+    <nav aria-label="site">
+      <a href="/">Permits</a>
+      <a href="/readme/">About</a>
+    </nav>
+    <main>
+      <p><a href={`/permits/${permitType.slug}`}>&larr; {permitType.name}</a></p>
+      <span class={`tag tag-${permitType.audience}`}>{permitType.audience}</span>
+      <h1>Apply for {permitType.name}</h1>
+
+      <h2>Who this is for</h2>
+      <ul>
+        {eligibilityCriteria.map((criterion) => <li>{criterion}</li>)}
+      </ul>
+
+      <h2>Documents you'll need</h2>
+      <ul>
+        {requiredDocuments.map((document) => <li>{document}</li>)}
+      </ul>
+
+      <form method="post" action="/api/applications">
+        <input type="hidden" name="permitTypeId" value={permitType.id} />
+
+        <label for="applicantName">Full name</label>
+        <input id="applicantName" name="applicantName" required maxlength="200" />
+
+        <label for="applicantEmail">ANU email</label>
+        <input id="applicantEmail" name="applicantEmail" type="email" required maxlength="200" />
+
+        <label for="applicantId">Staff/student ID</label>
+        <input id="applicantId" name="applicantId" required maxlength="50" />
+
+        <p class="confirm">
+          <input id="eligibilityConfirmed" name="eligibilityConfirmed" type="checkbox" required />
+          <label for="eligibilityConfirmed">
+            I meet the eligibility criteria listed above and can provide the required documents if asked.
+          </label>
+        </p>
+
+        <button>Continue to payment</button>
+      </form>
+    </main>
+  </body>
+</html>
