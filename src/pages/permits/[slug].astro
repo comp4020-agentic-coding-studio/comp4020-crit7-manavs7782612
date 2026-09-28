@@ -1,0 +1,50 @@
+---
+import { getPermitTypeBySlug } from "../../lib/db";
+import "../../styles.css";
+
+const { slug } = Astro.params;
+const permitType = slug ? getPermitTypeBySlug(slug) : undefined;
+
+if (!permitType) {
+  return new Response(null, { status: 404, statusText: "Not found" });
+}
+
+const eligibilityCriteria = permitType.eligibilityCriteria.split("\n");
+const requiredDocuments = permitType.requiredDocuments.split("\n");
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{permitType.name} — ANU ePermit</title>
+  </head>
+  <body>
+    <nav aria-label="site">
+      <a href="/">Permits</a>
+      <a href="/readme/">About</a>
+    </nav>
+    <main>
+      <p><a href="/">&larr; All permits</a></p>
+      <span class={`tag tag-${permitType.audience}`}>{permitType.audience}</span>
+      <h1>{permitType.name}</h1>
+      <p>{permitType.description}</p>
+      <p class="price">
+        {permitType.priceCents === 0 ? "Free" : `$${(permitType.priceCents / 100).toFixed(2)}`}
+      </p>
+
+      <h2>Who this is for</h2>
+      <ul>
+        {eligibilityCriteria.map((criterion) => <li>{criterion}</li>)}
+      </ul>
+
+      <h2>Documents you'll need</h2>
+      <ul>
+        {requiredDocuments.map((document) => <li>{document}</li>)}
+      </ul>
+
+      <p><a class="button" href={`/apply/${permitType.slug}`}>Apply for this permit</a></p>
+    </main>
+  </body>
+</html>
