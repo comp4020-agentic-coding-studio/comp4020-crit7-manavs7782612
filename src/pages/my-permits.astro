@@ -1,0 +1,71 @@
+---
+import { listApplicationsByEmail } from "../lib/db";
+import "../styles.css";
+
+// No login exists in this prototype, so the applicant's email — the same
+// field they typed on the application form — is the only lookup key. A
+// plain GET form keeps this a zero-client-JS page like the rest of the app:
+// the query string is the whole "session".
+const email = Astro.url.searchParams.get("email")?.trim() ?? "";
+const results = email ? listApplicationsByEmail(email) : [];
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My permits — ANU ePermit</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav aria-label="site">
+        <a class="brand" href="/">ANU ePermit</a>
+        <div class="nav-links">
+          <a href="/">Permits</a>
+          <a href="/my-permits/">My permits</a>
+          <a href="/readme/">About</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <h1>My permits</h1>
+      <p>Enter the email you applied with to see your permits and payment history.</p>
+
+      <form method="get">
+        <label for="email">ANU email</label>
+        <input id="email" name="email" type="email" required maxlength="200" value={email} />
+        <button>Find my permits</button>
+      </form>
+
+      {email && results.length === 0 && <p>No applications found for {email}.</p>}
+
+      {
+        results.length > 0 && (
+          <ul class="permit-list">
+            {results.map(({ application, permitType, payment }) => (
+              <li class="permit-card">
+                <span class={`tag tag-${permitType.audience}`}>{permitType.audience}</span>
+                <h2>
+                  <a href={`/status/${application.id}`}>{permitType.name}</a>
+                </h2>
+                <p>
+                  Applied {new Date(application.createdAt).toLocaleDateString("en-AU")} — status:{" "}
+                  <strong>{application.status}</strong>
+                </p>
+                {payment && (
+                  <p class="price">
+                    {payment.status === "succeeded" ? "Paid" : `Payment ${payment.status}`}
+                    {payment.amountCents > 0 && ` — $${(payment.amountCents / 100).toFixed(2)}`}
+                    {payment.completedAt &&
+                      ` on ${new Date(payment.completedAt).toLocaleDateString("en-AU")}`}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </main>
+  </body>
+</html>

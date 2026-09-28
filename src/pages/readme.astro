@@ -19,10 +19,16 @@ const html = (await readme.compiledContent()).replace(/(src|href)="public\//g, '
     <title>{title}</title>
   </head>
   <body>
-    <nav aria-label="site">
-      <a href="/">Guestbook</a>
-      <a href="/readme/">About</a>
-    </nav>
+    <header class="site-header">
+      <nav aria-label="site">
+        <a class="brand" href="/">ANU ePermit</a>
+        <div class="nav-links">
+          <a href="/">Permits</a>
+          <a href="/my-permits/">My permits</a>
+          <a href="/readme/">About</a>
+        </div>
+      </nav>
+    </header>
     <main set:html={html} />
   </body>
 </html>

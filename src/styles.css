@@ -1,18 +1,101 @@
+/* ANU brand palette (webpublishing.anu.edu.au/web-style-guide/colours):
+   gold is a highlight colour, restrained rather than a background fill, so it
+   drives borders, accents and the header bar; body copy stays black on white. */
+:root {
+  --anu-gold: #be830e;
+  --anu-gold-tint: #f5edde;
+  --anu-black: #000;
+  --anu-white: #fff;
+  --anu-grey: #333;
+  --anu-border: #ded4bd;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  padding: 2rem;
-  font-family: system-ui, sans-serif;
+  font-family:
+    "Helvetica Neue",
+    Arial,
+    system-ui,
+    sans-serif;
   line-height: 1.6;
-  color: #1a1a1a;
+  color: var(--anu-black);
+  background: var(--anu-white);
 }
 
 main {
   max-width: 40rem;
   margin: 0 auto;
+  padding: 2rem;
+}
+
+h1,
+h2 {
+  color: var(--anu-black);
 }
 
 a {
-  color: #0b5fff;
+  color: var(--anu-black);
+  text-decoration-color: var(--anu-gold);
+  text-decoration-thickness: 0.15em;
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--anu-gold);
+}
+
+:focus-visible {
+  outline: 3px solid var(--anu-gold);
+  outline-offset: 2px;
+}
+
+.site-header {
+  background: var(--anu-black);
+  border-bottom: 4px solid var(--anu-gold);
+}
+
+.site-header nav {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-header .brand {
+  color: var(--anu-white);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+.site-header .brand:hover,
+.site-header .brand:focus-visible {
+  color: var(--anu-gold);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.nav-links a {
+  color: var(--anu-white);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  color: var(--anu-gold);
 }
 
 form {
@@ -34,6 +117,8 @@ input:not([type]) {
   width: 100%;
   padding: 0.4rem 0.6rem;
   font: inherit;
+  border: 1px solid var(--anu-border);
+  border-radius: 0.25rem;
 }
 
 .confirm {
@@ -49,41 +134,38 @@ input:not([type]) {
 button,
 .button {
   display: inline-block;
-  padding: 0.5rem 1.2rem;
+  padding: 0.6rem 1.4rem;
   font: inherit;
-  background: #0b5fff;
-  color: #fff;
-  border: none;
-  border-radius: 0.3rem;
+  font-weight: 600;
+  background: var(--anu-black);
+  color: var(--anu-white);
+  border: 2px solid var(--anu-gold);
+  border-radius: 0.25rem;
   text-decoration: none;
   cursor: pointer;
 }
 
+button:hover,
+.button:hover,
+button:focus-visible,
+.button:focus-visible {
+  background: var(--anu-gold);
+  color: var(--anu-black);
+}
+
+/* One shared tag style for every audience: ANU's identity guidelines keep
+   the palette restrained rather than colour-coding categories, so the
+   audience name itself (not a colour) is what tells permit types apart. */
 .tag {
   display: inline-block;
   padding: 0.15rem 0.6rem;
   border-radius: 1rem;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  background: #e5e9f0;
-  color: #1a1a1a;
-}
-
-.tag-staff {
-  background: #dbeafe;
-}
-.tag-student {
-  background: #dcfce7;
-}
-.tag-visitor {
-  background: #fef3c7;
-}
-.tag-accessibility {
-  background: #ede9fe;
-}
-.tag-motorcycle {
-  background: #fee2e2;
+  background: var(--anu-gold-tint);
+  color: var(--anu-black);
+  border: 1px solid var(--anu-gold);
 }
 
 .permit-list {
@@ -95,7 +177,7 @@ button,
 }
 
 .permit-card {
-  border: 1px solid #d9dde3;
+  border: 1px solid var(--anu-border);
   border-radius: 0.5rem;
   padding: 1rem 1.25rem;
 }
@@ -105,5 +187,6 @@ button,
 }
 
 .price {
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--anu-grey);
 }

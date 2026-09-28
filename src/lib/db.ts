@@ -1,7 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import Database from "better-sqlite3";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import {
@@ -180,6 +180,22 @@ export function getApplicationWithDetails(
     .get();
   if (!row) return undefined;
   return row;
+}
+
+// There's no login here, so an email is the only handle an applicant has on
+// their own history — the same field they typed on the application form,
+// matched exactly (it's stored trimmed, not case-folded, at write time).
+export function listApplicationsByEmail(
+  applicantEmail: string,
+): Array<{ application: Application; permitType: PermitType; payment: Payment | null }> {
+  return db
+    .select({ application: applications, permitType: permitTypes, payment: payments })
+    .from(applications)
+    .innerJoin(permitTypes, eq(applications.permitTypeId, permitTypes.id))
+    .leftJoin(payments, eq(payments.applicationId, applications.id))
+    .where(eq(applications.applicantEmail, applicantEmail))
+    .orderBy(desc(applications.createdAt))
+    .all();
 }
 
 export function markPaymentSucceeded(applicationId: number): void {
