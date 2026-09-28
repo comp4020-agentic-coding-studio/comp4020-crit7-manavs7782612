@@ -35,11 +35,20 @@ multi-tab broadcast), the foreign keys applications→permit_types and
 payments→applications are indexed, and the status page reads through one
 joined query instead of three round-trips.
 
+There's no login here — an applicant's only handle on their own history is
+the email they typed on the application form. `/my-permits/` takes that
+email in a plain GET form (no client JS, no session) and renders every
+application tied to it alongside its payment: status, amount and, once
+paid, the completion date — so "did my payment go through" and "what did I
+apply for" are one lookup, not a support email.
+
 What's enforced by `spec/` (`spec/permits.test.ts`,
-`spec/application-flow.test.ts`, plus the shipped invariants): every audience
-tag appears on the browse page, eligibility criteria appear before the apply
-link on the detail page and again on the form, required documents are
-stated, and an application survives two consecutive reads of its status page
-after payment. What's left as judgement: which five permit types to model,
+`spec/application-flow.test.ts`, `spec/my-permits.test.ts`, plus the shipped
+invariants): every audience tag appears on the browse page, eligibility
+criteria appear before the apply link on the detail page and again on the
+form, required documents are stated, an application survives two consecutive
+reads of its status page after payment, and looking up an email on
+`/my-permits/` surfaces that applicant's applications and payment status but
+no one else's. What's left as judgement: which five permit types to model,
 how the mocked payment is worded, and the visual design of the tags — the
 brief asks for a believable slice, not the *whole* ANU parking system.

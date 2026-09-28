@@ -52,6 +52,15 @@ before writing the automated version of the same check
 ([`be0d44b`](https://github.com/comp4020-agentic-coding-studio/comp4020-crit7-manavs7782612/commit/be0d44b)).
 `pnpm check` is green on every commit in this history.
 
+Later, on rereading the flow, I noticed there was nowhere to check "did my
+payment go through" once you'd left the status page — no login exists, so
+without a lookup that answer was gone the moment you closed the tab. I
+added `/my-permits/`, keyed on the applicant's email (the one field they
+already type on the form, and the only handle they have on their own
+history without an account), with a spec test asserting one applicant's
+email never surfaces another's application
+([`5c86360`](https://github.com/comp4020-agentic-coding-studio/comp4020-crit7-manavs7782612/commit/5c86360)).
+
 ## Before you ship
 
 `pnpm check:evidence` verifies that this comment is gone, that your citations
